@@ -16,7 +16,7 @@
     --top-bar-item-spacing: 1rem;
     --top-bar-height: 70px;
     --top-bar-padding-y: 0.75rem;
-    --top-bar-padding-x: 1.5rem;
+    --top-bar-padding-x: 0px; /* MODIFIED: Was 1.5rem, now 0px to remove side padding */
 
 
     /* Search Bar (Light Mode - assuming on dark top bar) */
@@ -40,7 +40,7 @@
 
     /* General Page Layout */
     --content-padding-top: calc(var(--top-bar-height) + 1rem);
-    --content-padding-x: 1.5rem;
+    --content-padding-x: 0px; /* MODIFIED: Was 1.5rem, now 0px to remove side padding */
 }
 
 /* Dark theme variables */
@@ -76,10 +76,6 @@ html.dark {
     --font-mono: var(--font-geist-mono);
 }
 
-/* Remove the @media (prefers-color-scheme: dark) block for :root variables
-   as we are now controlling it with the .dark class via JavaScript.
-   The JS will handle the initial system preference. */
-
 body {
     background: var(--background);
     color: var(--foreground);
@@ -93,7 +89,7 @@ body {
 .sticky-top-bar {
     background-color: var(--top-bar-bg);
     color: var(--top-bar-text-color);
-    padding: var(--top-bar-padding-y) var(--top-bar-padding-x);
+    padding: var(--top-bar-padding-y) var(--top-bar-padding-x); /* This will now use 0px for x-padding */
     position: fixed;
     top: 0;
     left: 0;
@@ -103,7 +99,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06); /* Softer shadow */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
     box-sizing: border-box;
     transition: background-color 0.3s ease;
 }
@@ -113,12 +109,14 @@ body {
     text-decoration: none;
     font-size: 1.5rem;
     font-weight: bold;
+    padding-left: 1.5rem; /* Add some padding here if top-bar-padding-x is 0 for visual spacing for the logo */
 }
 
 .top-bar-controls {
     display: flex;
     align-items: center;
     gap: var(--top-bar-item-spacing);
+    padding-right: 1.5rem; /* Add some padding here if top-bar-padding-x is 0 for visual spacing for controls */
 }
 
 .search-bar-container {
@@ -172,28 +170,90 @@ body {
 /* Theme Toggle Button Styling */
 .theme-toggle-button {
     background-color: transparent;
-    color: var(--top-bar-text-color); /* Use top bar text color */
-    border: 1px solid var(--top-bar-text-color); /* Subtle border */
+    color: var(--top-bar-text-color);
+    border: 1px solid var(--top-bar-text-color);
     padding: 0.35rem 0.6rem;
     border-radius: var(--top-nav-button-border-radius);
     cursor: pointer;
-    font-size: 1.1rem; /* Adjust icon size */
-    line-height: 1; /* Ensure icon is centered */
+    font-size: 1.1rem;
+    line-height: 1;
     transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
 .theme-toggle-button:hover,
 .theme-toggle-button:focus {
-    background-color: var(--top-nav-button-bg-hover); /* Use nav button hover for consistency */
+    background-color: var(--top-nav-button-bg-hover);
     border-color: var(--top-nav-button-bg-hover);
     outline: none;
 }
 
 .main-page-content {
-    /* background: var(--background); Page background is now on body */
-    /* color: var(--foreground); Page foreground color is now on body */
-    padding-left: var(--content-padding-x);
-    padding-right: var(--content-padding-x);
+    padding-left: var(--content-padding-x); /* This will now use 0px */
+    padding-right: var(--content-padding-x); /* This will now use 0px */
     padding-bottom: 1.5rem;
-    /* padding-top is handled by body's padding-top */
+}
+
+/* Container for the image showcase page content */
+.image-showcase-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    /* padding: 2rem var(--content-padding-x); Inherits 0px horizontal padding now */
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    box-sizing: border-box;
+}
+
+.image-showcase-title {
+    color: var(--foreground);
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.image-placeholder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px; /* This will keep the grid itself centered and not full-width */
+    /* If you want the grid items to touch the edges, you might need to remove max-width
+       or adjust padding on the grid's parent if content-padding-x is 0 */
+    padding-left: 1.5rem; /* Add padding back if you want grid items not to touch edges */
+    padding-right: 1.5rem; /* Add padding back if you want grid items not to touch edges */
+    box-sizing: border-box;
+}
+
+.image-placeholder-item {
+    background-color: var(--border-color);
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    text-decoration: none;
+    color: var(--foreground);
+    font-size: 1.3rem;
+    font-weight: 600;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, background-color 0.3s ease;
+}
+
+.image-placeholder-item:hover,
+.image-placeholder-item:focus {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    background-color: var(--search-input-bg);
+    color: var(--accent-color);
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+.image-placeholder-item span {
+    max-width: 90%;
 }

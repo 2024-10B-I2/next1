@@ -1,38 +1,16 @@
-import Link from 'next/link';
 import React from 'react';
 
 const navigationItems = [
-    {id: 'rezepte', text: 'Rezepte', href: '/foo'},
+    {id: 'rezepte', text: 'Rezepte', href: '/burger'},
     {id: 'kategorien', text: 'Kategorien', href: '/categories'},
     {id: 'planner', text: 'Planner', href: '/meal-planner'},
+    {id: 'koeche', text: 'Unsere Köche', href: '/koeche'},
     // Hier mehr hinzufügen
 ];
 
 export default function HomePage() {
     return (
         <>
-            <header className="sticky-top-bar">
-                <div className="top-bar-logo">
-                    <Link href="/">HTS Rezepte</Link>
-                </div>
-                <div className="top-bar-controls">
-                    <div className="search-bar-container">
-                        <input
-                            type="search"
-                            placeholder="Rezepte suchen..."
-                            className="search-input"
-                            aria-label="Search recipes"
-                        />
-                    </div>
-                    <nav className="top-bar-nav" aria-label="Main navigation">
-                        {navigationItems.map((item) => (
-                            <Link key={item.id} href={item.href} className="top-bar-nav-button">
-                                {item.text}
-                            </Link>
-                        ))}
-                    </nav>
-                </div>
-            </header>
 
             <main className="main-page-content">
                 <h1>Willkommen!</h1>
