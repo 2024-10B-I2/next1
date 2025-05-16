@@ -1,26 +1,161 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --background: #ffffff;
+    --foreground: #171717;
+
+    /* Color Palette */
+    --primary-bg: #000000;
+    --primary-text: #ffffff;
+    --secondary-text: #cccccc;
+    --accent-color: #4a90e2;
+    --border-color: #333333;
+
+    /* Top Bar Variables */
+    --top-bar-height: 70px;
+    --top-bar-bg: var(--primary-bg);
+    --top-bar-text-color: var(--primary-text);
+    --top-bar-padding-y: 0.75rem;
+    --top-bar-padding-x: 1.5rem;
+    --top-bar-item-spacing: 1rem;
+
+    /* Search Bar Variables */
+    --search-input-bg: #222222;
+    --search-input-text-color: var(--primary-text);
+    --search-input-border-color: var(--border-color);
+    --search-input-placeholder-color: #888888;
+    --search-input-padding-x: 0.75rem;
+    --search-input-padding-y: 0.5rem;
+    --search-input-border-radius: 5px;
+
+    /* Navigation Button (in Top Bar) Variables */
+    --top-nav-button-bg: transparent;
+    --top-nav-button-text-color: var(--primary-text);
+    --top-nav-button-bg-hover: #2a2a2a;
+    --top-nav-button-bg-active: #3a3a3a;
+    --top-nav-button-padding-x: 1rem;
+    --top-nav-button-padding-y: 0.5rem;
+    --top-nav-button-border-radius: 5px;
+    --top-nav-font-size: 0.9rem;
+
+    /* General Page Layout */
+    --content-padding-top: calc(var(--top-bar-height) + 1rem); /* Space for fixed top bar */
+    --content-padding-x: 1.5rem;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+    :root {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+    }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background: var(--background); /* This will be the page background below the top bar */
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding-top: var(--top-bar-height); /* Global padding to prevent content from hiding under fixed top bar */
 }
+
+/* Sticky Top Bar Styling */
+.sticky-top-bar {
+    background-color: var(--top-bar-bg);
+    color: var(--top-bar-text-color);
+    padding: var(--top-bar-padding-y) var(--top-bar-padding-x);
+    position: fixed; /* Makes it stick to the top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--top-bar-height);
+    z-index: 1000; /* Ensures it's above other content */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Puts logo/title on left, search/nav on right */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional shadow */
+    box-sizing: border-box;
+}
+
+.top-bar-logo a { /* If you add a logo or site title */
+    color: var(--top-bar-text-color);
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.top-bar-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--top-bar-item-spacing);
+}
+
+/* Search Bar Styling */
+.search-bar-container {
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    background-color: var(--search-input-bg);
+    color: var(--search-input-text-color);
+    border: 1px solid var(--search-input-border-color);
+    padding: var(--search-input-padding-y) var(--search-input-padding-x);
+    border-radius: var(--search-input-border-radius);
+    font-size: 0.9rem;
+    min-width: 200px; /* Adjust as needed */
+}
+
+.search-input::placeholder {
+    color: var(--search-input-placeholder-color);
+}
+
+/* Navigation Buttons in Top Bar Styling */
+.top-bar-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Spacing between nav buttons */
+}
+
+.top-bar-nav-button {
+    background-color: var(--top-nav-button-bg);
+    color: var(--top-nav-button-text-color);
+    padding: var(--top-nav-button-padding-y) var(--top-nav-button-padding-x);
+    border-radius: var(--top-nav-button-border-radius);
+    text-decoration: none;
+    font-size: var(--top-nav-font-size);
+    font-weight: 500;
+    transition: background-color 0.2s ease-in-out;
+    border: 1px solid transparent; /* For consistent sizing on hover/active if border is added */
+}
+
+.top-bar-nav-button:hover,
+.top-bar-nav-button:focus {
+    background-color: var(--top-nav-button-bg-hover);
+    outline: none;
+}
+
+.top-bar-nav-button:active {
+    background-color: var(--top-nav-button-bg-active);
+}
+
+/* Main Content Area - ensure it doesn't hide under the top bar */
+.main-page-content {
+    padding-top: var(--content-padding-top); /* Initial padding for content already covered by body.padding-top */
+    padding-left: var(--content-padding-x);
+    padding-right: var(--content-padding-x);
+    padding-bottom: 1.5rem; /* Some bottom padding */
+    /* The background color for this area will be the body background */
+}
+
+/*
+  Removing old styles for centered square navigation as they are replaced.
+  .recipe-home-page-container, .recipe-navigation, .recipe-nav-button
+  are no longer used in this new layout.
+*/
