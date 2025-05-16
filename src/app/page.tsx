@@ -2,8 +2,8 @@ import Link from 'next/link';
 import React from 'react';
 
 const navigationItems = [
-    {id: 'browse', text: 'Rezepte', href: '/recipes'},
-    {id: 'categories', text: 'Kategorien', href: '/categories'},
+    {id: 'rezepte', text: 'Rezepte', href: '/foo'},
+    {id: 'kategorien', text: 'Kategorien', href: '/categories'},
     {id: 'planner', text: 'Planner', href: '/meal-planner'},
     // Hier mehr hinzufügen
 ];
