@@ -1,89 +1,114 @@
 @import "tailwindcss";
 
+/* :root now defines light theme variables by default */
 :root {
     --background: #ffffff;
     --foreground: #171717;
+    --primary-bg: #000000; /* For elements like top bar in light mode, it's dark */
+    --primary-text: #ffffff; /* Text on primary-bg */
+    --secondary-text: #555555; /* General secondary text for light mode */
+    --accent-color: #007bff; /* A more standard blue accent */
+    --border-color: #dddddd; /* Lighter border for light mode */
 
-    /* Color Palette */
-    --primary-bg: #000000;
-    --primary-text: #ffffff;
-    --secondary-text: #cccccc;
-    --accent-color: #4a90e2;
-    --border-color: #333333;
-
-    /* Top Bar Variables */
+    /* Top Bar Variables (Light Mode - assuming top bar is dark) */
+    --top-bar-bg: #1a1a1a; /* Dark top bar for light mode */
+    --top-bar-text-color: #f0f0f0;
+    --top-bar-item-spacing: 1rem;
     --top-bar-height: 70px;
-    --top-bar-bg: var(--primary-bg);
-    --top-bar-text-color: var(--primary-text);
     --top-bar-padding-y: 0.75rem;
     --top-bar-padding-x: 1.5rem;
-    --top-bar-item-spacing: 1rem;
 
-    /* Search Bar Variables */
-    --search-input-bg: #222222;
-    --search-input-text-color: var(--primary-text);
-    --search-input-border-color: var(--border-color);
-    --search-input-placeholder-color: #888888;
+
+    /* Search Bar (Light Mode - assuming on dark top bar) */
+    --search-input-bg: #333333;
+    --search-input-text-color: #f0f0f0;
+    --search-input-border-color: #555555;
+    --search-input-placeholder-color: #aaaaaa;
     --search-input-padding-x: 0.75rem;
     --search-input-padding-y: 0.5rem;
     --search-input-border-radius: 5px;
 
-    /* Navigation Button (in Top Bar) Variables */
+    /* Navigation Button (Light Mode - on dark top bar) */
     --top-nav-button-bg: transparent;
-    --top-nav-button-text-color: var(--primary-text);
-    --top-nav-button-bg-hover: #2a2a2a;
-    --top-nav-button-bg-active: #3a3a3a;
+    --top-nav-button-text-color: var(--top-bar-text-color);
+    --top-nav-button-bg-hover: #444444;
+    --top-nav-button-bg-active: #555555;
     --top-nav-button-padding-x: 1rem;
     --top-nav-button-padding-y: 0.5rem;
     --top-nav-button-border-radius: 5px;
     --top-nav-font-size: 0.9rem;
 
     /* General Page Layout */
-    --content-padding-top: calc(var(--top-bar-height) + 1rem); /* Space for fixed top bar */
+    --content-padding-top: calc(var(--top-bar-height) + 1rem);
     --content-padding-x: 1.5rem;
 }
 
+/* Dark theme variables */
+html.dark {
+    --background: #0a0a0a; /* Page background */
+    --foreground: #ededed; /* Main text color for page content */
+    --primary-bg: #1c1c1e; /* Darker shade for elements like top bar in dark mode */
+    --primary-text: #f0f0f0;
+    --secondary-text: #bbbbbb;
+    --accent-color: #0a84ff; /* iOS-like blue for dark mode accent */
+    --border-color: #3a3a3c; /* Darker border for dark mode */
+
+    /* Top Bar Variables (Dark Mode) */
+    --top-bar-bg: #1c1c1e; /* Slightly different dark for top bar */
+    --top-bar-text-color: #f0f0f0;
+
+    /* Search Bar (Dark Mode) */
+    --search-input-bg: #2c2c2e;
+    --search-input-text-color: #f0f0f0;
+    --search-input-border-color: #48484a;
+    --search-input-placeholder-color: #999999;
+
+    /* Navigation Button (Dark Mode) */
+    --top-nav-button-bg-hover: #3a3a3c;
+    --top-nav-button-bg-active: #4a4a4c;
+}
+
 @theme inline {
+    /* This seems Tailwind specific, ensure it works with dynamic class changes */
     --color-background: var(--background);
     --color-foreground: var(--foreground);
-    --font-sans: var(--font-geist-sans);
+    --font-sans: var(--font-geist-sans); /* Ensure these fonts are defined/imported */
     --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background: #0a0a0a;
-        --foreground: #ededed;
-    }
-}
+/* Remove the @media (prefers-color-scheme: dark) block for :root variables
+   as we are now controlling it with the .dark class via JavaScript.
+   The JS will handle the initial system preference. */
 
 body {
-    background: var(--background); /* This will be the page background below the top bar */
+    background: var(--background);
     color: var(--foreground);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* System font stack */
     margin: 0;
-    padding-top: var(--top-bar-height); /* Global padding to prevent content from hiding under fixed top bar */
+    padding-top: var(--top-bar-height);
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
 }
 
-/* Sticky Top Bar Styling */
+/* Sticky Top Bar Styling (uses variables that change with theme) */
 .sticky-top-bar {
     background-color: var(--top-bar-bg);
     color: var(--top-bar-text-color);
     padding: var(--top-bar-padding-y) var(--top-bar-padding-x);
-    position: fixed; /* Makes it stick to the top */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: var(--top-bar-height);
-    z-index: 1000; /* Ensures it's above other content */
+    z-index: 1000;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Puts logo/title on left, search/nav on right */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional shadow */
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06); /* Softer shadow */
     box-sizing: border-box;
+    transition: background-color 0.3s ease;
 }
 
-.top-bar-logo a { /* If you add a logo or site title */
+.top-bar-logo a {
     color: var(--top-bar-text-color);
     text-decoration: none;
     font-size: 1.5rem;
@@ -96,7 +121,6 @@ body {
     gap: var(--top-bar-item-spacing);
 }
 
-/* Search Bar Styling */
 .search-bar-container {
     display: flex;
     align-items: center;
@@ -109,18 +133,18 @@ body {
     padding: var(--search-input-padding-y) var(--search-input-padding-x);
     border-radius: var(--search-input-border-radius);
     font-size: 0.9rem;
-    min-width: 200px; /* Adjust as needed */
+    min-width: 200px;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 .search-input::placeholder {
     color: var(--search-input-placeholder-color);
 }
 
-/* Navigation Buttons in Top Bar Styling */
 .top-bar-nav {
     display: flex;
     align-items: center;
-    gap: 0.5rem; /* Spacing between nav buttons */
+    gap: 0.5rem;
 }
 
 .top-bar-nav-button {
@@ -131,8 +155,8 @@ body {
     text-decoration: none;
     font-size: var(--top-nav-font-size);
     font-weight: 500;
-    transition: background-color 0.2s ease-in-out;
-    border: 1px solid transparent; /* For consistent sizing on hover/active if border is added */
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    border: 1px solid transparent;
 }
 
 .top-bar-nav-button:hover,
@@ -145,17 +169,31 @@ body {
     background-color: var(--top-nav-button-bg-active);
 }
 
-/* Main Content Area - ensure it doesn't hide under the top bar */
-.main-page-content {
-    padding-top: var(--content-padding-top); /* Initial padding for content already covered by body.padding-top */
-    padding-left: var(--content-padding-x);
-    padding-right: var(--content-padding-x);
-    padding-bottom: 1.5rem; /* Some bottom padding */
-    /* The background color for this area will be the body background */
+/* Theme Toggle Button Styling */
+.theme-toggle-button {
+    background-color: transparent;
+    color: var(--top-bar-text-color); /* Use top bar text color */
+    border: 1px solid var(--top-bar-text-color); /* Subtle border */
+    padding: 0.35rem 0.6rem;
+    border-radius: var(--top-nav-button-border-radius);
+    cursor: pointer;
+    font-size: 1.1rem; /* Adjust icon size */
+    line-height: 1; /* Ensure icon is centered */
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
-/*
-  Removing old styles for centered square navigation as they are replaced.
-  .recipe-home-page-container, .recipe-navigation, .recipe-nav-button
-  are no longer used in this new layout.
-*/
+.theme-toggle-button:hover,
+.theme-toggle-button:focus {
+    background-color: var(--top-nav-button-bg-hover); /* Use nav button hover for consistency */
+    border-color: var(--top-nav-button-bg-hover);
+    outline: none;
+}
+
+.main-page-content {
+    /* background: var(--background); Page background is now on body */
+    /* color: var(--foreground); Page foreground color is now on body */
+    padding-left: var(--content-padding-x);
+    padding-right: var(--content-padding-x);
+    padding-bottom: 1.5rem;
+    /* padding-top is handled by body's padding-top */
+}
