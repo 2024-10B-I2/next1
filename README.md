@@ -65,7 +65,7 @@ Now you will see in GitHub Actions that a new build has been triggered for the t
 
 Open the GitHub repository [argocd-recipes](https://github.com/2024-10B-I2/argocd-recipes) in your browser!
 
-Find a file `deploy-app.yaml` and edit it! Update the line that starts with `iamge:` to reflect the Docker image tag that is desired.
+Find a file `deploy-app.yaml` and edit it! Update the line that starts with `image:` to reflect the Docker image tag that is desired.
 
 Commit the change in this files directly to the main branch! After maximum 3 minutes the deployment of the new version should start.
 
