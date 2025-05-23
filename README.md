@@ -39,25 +39,36 @@ We use [Semantic Versioning](https://semver.org). Decide what kind of change you
 
 Run 
 
-  npm version patch
+
+```bash
+npm version patch
+```
 
 or 
 
-  npm version minor
+```bash
+npm version minor
+```
 
 or 
 
-  npm version major
+```bash
+npm version major
+```
 
 As a result you will get a new version number in `package.json`. The changes are automatically commited and a new tag is created based on the new version number.
 
 Run both
 
-  git push
+```bash
+git push
+```
 
 and 
 
-  git push --tags
+```bash
+git push --tags
+```
 
 Now you will see in GitHub Actions that a new build has been triggered for the tag. Normally the build should succeed. In the build output you can have a look at the step `Build and push Docker image`. The last output there is `Metadata`. Here you can find the exact tag information for the image that has been pushed to `ghcr.io`.
 
