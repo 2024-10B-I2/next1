@@ -33,6 +33,9 @@ jobs:
       # This is used to complete the identity challenge
       # with sigstore/fulcio when running outside of PRs.
       id-token: write
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }} # Exportiere den generierten Tag
+      image_digest: ${{ steps.build-and-push.outputs.digest }} # Exportiere den Digest
 
     steps:
       - name: Checkout repository
