@@ -104,3 +104,19 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+
+      - name: Dispatch update to ArgoCD recipes repo
+        # Dieser Schritt wird nur ausgeführt, wenn kein Pull Request vorliegt
+        # und nicht bei einem geplanten Lauf, sondern nur bei einem echten Push oder Tag
+        if: ${{ github.event_name != 'pull_request' && github.event_name != 'schedule' }}
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT_FOR_CROSS_REPO }} # Nutze das zuvor erstellte Secret
+          repository: 2024-10B-I2/argocd-recipes # Das Ziel-Repository
+          event-type: new-image-pushed # Ein von Ihnen definierter Event-Typ
+          client-payload: | # Die Daten, die an den Ziel-Workflow übergeben werden
+            {
+              "image_name": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}",
+              "image_tag": "${{ steps.meta.outputs.tags }}",
+              "image_digest": "${{ steps.build-and-push.outputs.digest }}"
+            }
