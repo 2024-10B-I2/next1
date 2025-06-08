@@ -112,14 +112,14 @@ jobs:
           # Extrahiere die Tags sicher aus dem JSON-Output von docker/metadata-action
           CLEAN_TAGS=$(echo '${{ steps.meta.outputs.json }}' | jq -r '[.tags[]] | join(",")')
 
-          # Erstelle das vollständige JSON-Objekt
+          # Erstelle das vollständige JSON-Objekt mit jq -c (für komprimierten Output)
           PAYLOAD_JSON=$(jq -n \
                           --arg image_name "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" \
                           --arg image_tag "$CLEAN_TAGS" \
                           --arg image_digest "${{ steps.build-and-push.outputs.digest }}" \
-                          '{image_name: $image_name, image_tag: $image_tag, image_digest: $image_digest}')
+                          '{image_name: $image_name, image_tag: $image_tag, image_digest: $image_digest}' | jq -c .)
 
-          echo "Generated Payload: $PAYLOAD_JSON"
+          echo "Generated Payload (single line): $PAYLOAD_JSON"
           echo "payload=$PAYLOAD_JSON" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch update to ArgoCD recipes repo
@@ -129,4 +129,4 @@ jobs:
           token: ${{ secrets.PAT_FOR_CROSS_REPO }}
           repository: 2024-10B-I2/argocd-recipes
           event-type: new-image-pushed
-          client-payload: ${{ steps.create_payload.outputs.payload }} # <-- Hier wird der vorbereitete JSON-String übergeben
+          client-payload: ${{ steps.create_payload.outputs.payload }}
