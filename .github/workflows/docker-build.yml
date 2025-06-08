@@ -114,4 +114,9 @@ jobs:
           token: ${{ secrets.PAT_FOR_CROSS_REPO }} # Nutze das zuvor erstellte Secret
           repository: 2024-10B-I2/argocd-recipes # Das Ziel-Repository
           event-type: new-image-pushed # Ein von Ihnen definierter Event-Typ
-          client-payload: '{"image_name": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}", "image_tag": "${{ steps.meta.outputs.tags }}", "image_digest": "${{ steps.build-and-push.outputs.digest }}"}'
+          client-payload: > 
+            {
+              "image_name": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}",
+              "image_tag": ${{ steps.meta.outputs.tags | toJson }}, 
+              "image_digest": "${{ steps.build-and-push.outputs.digest }}"
+            }
