@@ -105,14 +105,17 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
       
-      - name: Prepare JSON-escaped image tag
-        id: escaped_tag
+      - name: Prepare image tags for dispatch
+        id: prepare_tags
         run: |
-          # Den Wert von steps.meta.outputs.tags als JSON-String escapen
-          # Dies wird Zeilenumbrüche, Anführungszeichen usw. korrekt behandeln
-          ESCAPED_TAG=$(echo "${{ steps.meta.outputs.tags }}" | jq -RToJson)
-          echo "ESCAPED_TAG=${ESCAPED_TAG}" >> "$GITHUB_OUTPUT"
-        shell: bash
+          # Die `docker/metadata-action` exportiert den vollständigen JSON-Output unter steps.meta.outputs.json
+          # Wir nutzen `jq`, um das 'tags'-Array zu extrahieren und in einen kommagetrennten String umzuwandeln.
+          # `-c` für komprimierten Output (einzeilig), `-r` für Raw-Output (ohne Anführungszeichen um Strings)
+          # Wir extrahieren jeden Tag einzeln mit .tags[] und joinen sie dann mit ","
+          CLEAN_TAGS=$(echo '${{ steps.meta.outputs.json }}' | jq -r '[.tags[]] | join(",")')
+
+          echo "Cleaned Tags for Dispatch: $CLEAN_TAGS"
+          echo "cleaned_tags=$CLEAN_TAGS" >> "$GITHUB_OUTPUT"
         
       - name: Dispatch update to ArgoCD recipes repo
         # Dieser Schritt wird nur ausgeführt, wenn kein Pull Request vorliegt
