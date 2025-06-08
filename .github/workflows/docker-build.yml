@@ -104,7 +104,16 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
-
+      
+      - name: Prepare JSON-escaped image tag
+        id: escaped_tag
+        run: |
+          # Den Wert von steps.meta.outputs.tags als JSON-String escapen
+          # Dies wird Zeilenumbrüche, Anführungszeichen usw. korrekt behandeln
+          ESCAPED_TAG=$(echo "${{ steps.meta.outputs.tags }}" | jq -RToJson)
+          echo "ESCAPED_TAG=${ESCAPED_TAG}" >> "$GITHUB_OUTPUT"
+        shell: bash
+        
       - name: Dispatch update to ArgoCD recipes repo
         # Dieser Schritt wird nur ausgeführt, wenn kein Pull Request vorliegt
         # und nicht bei einem geplanten Lauf, sondern nur bei einem echten Push oder Tag
@@ -114,9 +123,9 @@ jobs:
           token: ${{ secrets.PAT_FOR_CROSS_REPO }} # Nutze das zuvor erstellte Secret
           repository: 2024-10B-I2/argocd-recipes # Das Ziel-Repository
           event-type: new-image-pushed # Ein von Ihnen definierter Event-Typ
-          client-payload: > 
+          client-payload: >
             {
               "image_name": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}",
-              "image_tag": ${{ steps.meta.outputs.tags | toJson }}, 
+              "image_tag": ${{ steps.escaped_tag.outputs.ESCAPED_TAG }}, # <--- HIER VERWENDEN
               "image_digest": "${{ steps.build-and-push.outputs.digest }}"
             }
