@@ -105,30 +105,28 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
       
-      - name: Prepare image tags for dispatch
-        id: prepare_tags
+      # NEUER SCHRITT: Erstelle den vollständigen JSON-Payload
+      - name: Create dispatch payload
+        id: create_payload
         run: |
-          # Die `docker/metadata-action` exportiert den vollständigen JSON-Output unter steps.meta.outputs.json
-          # Wir nutzen `jq`, um das 'tags'-Array zu extrahieren und in einen kommagetrennten String umzuwandeln.
-          # `-c` für komprimierten Output (einzeilig), `-r` für Raw-Output (ohne Anführungszeichen um Strings)
-          # Wir extrahieren jeden Tag einzeln mit .tags[] und joinen sie dann mit ","
+          # Extrahiere die Tags sicher aus dem JSON-Output von docker/metadata-action
           CLEAN_TAGS=$(echo '${{ steps.meta.outputs.json }}' | jq -r '[.tags[]] | join(",")')
 
-          echo "Cleaned Tags for Dispatch: $CLEAN_TAGS"
-          echo "cleaned_tags=$CLEAN_TAGS" >> "$GITHUB_OUTPUT"
-        
+          # Erstelle das vollständige JSON-Objekt
+          PAYLOAD_JSON=$(jq -n \
+                          --arg image_name "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" \
+                          --arg image_tag "$CLEAN_TAGS" \
+                          --arg image_digest "${{ steps.build-and-push.outputs.digest }}" \
+                          '{image_name: $image_name, image_tag: $image_tag, image_digest: $image_digest}')
+
+          echo "Generated Payload: $PAYLOAD_JSON"
+          echo "payload=$PAYLOAD_JSON" >> "$GITHUB_OUTPUT"
+
       - name: Dispatch update to ArgoCD recipes repo
-        # Dieser Schritt wird nur ausgeführt, wenn kein Pull Request vorliegt
-        # und nicht bei einem geplanten Lauf, sondern nur bei einem echten Push oder Tag
         if: ${{ github.event_name != 'pull_request' && github.event_name != 'schedule' }}
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.PAT_FOR_CROSS_REPO }} # Nutze das zuvor erstellte Secret
-          repository: 2024-10B-I2/argocd-recipes # Das Ziel-Repository
-          event-type: new-image-pushed # Ein von Ihnen definierter Event-Typ
-          client-payload: >
-            {
-              "image_name": "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}",
-              "image_tag": ${{ steps.escaped_tag.outputs.ESCAPED_TAG }}, # <--- HIER VERWENDEN
-              "image_digest": "${{ steps.build-and-push.outputs.digest }}"
-            }
+          token: ${{ secrets.PAT_FOR_CROSS_REPO }}
+          repository: 2024-10B-I2/argocd-recipes
+          event-type: new-image-pushed
+          client-payload: ${{ steps.create_payload.outputs.payload }} # <-- Hier wird der vorbereitete JSON-String übergeben
