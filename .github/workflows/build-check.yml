@@ -1,0 +1,46 @@
+name: Next.js Compile Check
+
+on:
+  push:
+    branches:
+      - main # Führt den Workflow aus, wenn Änderungen auf 'main' gepusht werden
+  pull_request:
+    branches:
+      - main # Führt den Workflow aus, wenn ein Pull Request zu 'main' geöffnet wird
+  workflow_dispatch: # Ermöglicht das manuelle Ausführen des Workflows über die GitHub UI
+
+jobs:
+  build_check:
+    runs-on: ubuntu-latest # Der Runner, auf dem der Workflow ausgeführt wird
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4 # Klonen des Repository-Codes
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22' # Oder die Node.js-Version, die Ihr Projekt benötigt (z.B. '18', '21')
+          cache: 'npm' # Verwenden Sie das Cache-Feature von setup-node für npm-Pakete
+          # cache: 'yarn' # Falls Sie yarn verwenden
+          # cache: 'pnpm' # Falls Sie pnpm verwenden
+
+      - name: Install Dependencies
+        run: npm ci # 'npm ci' ist besser für CI/CD, da es genau die Versionen aus package-lock.json installiert
+        # Alternativ für yarn: run: yarn install --frozen-lockfile
+        # Alternativ für pnpm: run: pnpm install --frozen-lockfile
+
+      - name: Run Next.js Build Check
+        run: npm run build # Dies ist der Kernschritt, der die Kompilierfähigkeit prüft
+        # next build
+        # Beachten Sie, dass Next.js standardmäßig `npm run build` in `package.json` hat.
+        # Wenn Sie einen benutzerdefinierten Build-Befehl haben, verwenden Sie diesen hier.
+
+      # Optional: Wenn Sie auch Linting oder Tests ausführen möchten
+      - name: Run Lint
+        run: npm run lint
+        continue-on-error: true # Optionale Einstellung: Workflow schlägt nicht fehl, wenn Linting Fehler hat
+
+      - name: Run Tests (optional, falls vorhanden)
+        run: npm test
+        # Falls Sie spezifische Test-Befehle haben, passen Sie diese an.
