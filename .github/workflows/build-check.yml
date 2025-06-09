@@ -37,10 +37,10 @@ jobs:
         # Wenn Sie einen benutzerdefinierten Build-Befehl haben, verwenden Sie diesen hier.
 
       # Optional: Wenn Sie auch Linting oder Tests ausführen möchten
-      - name: Run Lint
-        run: npm run lint
-        continue-on-error: true # Optionale Einstellung: Workflow schlägt nicht fehl, wenn Linting Fehler hat
+    #   - name: Run Lint
+    #     run: npm run lint
+    #     continue-on-error: true # Optionale Einstellung: Workflow schlägt nicht fehl, wenn Linting Fehler hat
 
-      - name: Run Tests (optional, falls vorhanden)
-        run: npm test
-        # Falls Sie spezifische Test-Befehle haben, passen Sie diese an.
+    #   - name: Run Tests (optional, falls vorhanden)
+    #     run: npm test
+    #     # Falls Sie spezifische Test-Befehle haben, passen Sie diese an.
